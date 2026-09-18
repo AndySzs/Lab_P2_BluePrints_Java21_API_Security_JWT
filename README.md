@@ -127,7 +127,31 @@ src/main/resources/
 
 4. Modificar el tiempo de expiración del token y observar el efecto.
 
+Configuración de la expiración:
+   Se modificó el tiempo de vida del token JWT en el componente de seguridad de la aplicación (o en el archivo de propiedades), 
+   configurándolo a un intervalo reducido (por ejemplo, 360 segundos o 6 minutos) con el fin de validar de forma ágil el comportamiento del sistema ante la 
+   caducidad de credenciales.
+Verificación de la generación exitosa:
+   Al realizar una petición POST al endpoint de autenticación (/auth/login) con credenciales válidas, el sistema procesa la solicitud de manera correcta retornando un código de estado HTTP 200 OK. 
+   En el cuerpo de la respuesta (Response Body), se observa la entrega del access_token junto con el parámetro expires_in: 360, el cual confirma que el tiempo de expiración configurado se está aplicando exitosamente
+
+![Captura de pantalla 2026-09-18 060515.png](Images/Captura%20de%20pantalla%202026-09-18%20060515.png)
+
+Observación del efecto (Token Expirado):
+
+Comportamiento inicial: 
+Al utilizar el token inmediatamente después de ser generado en cualquier recurso o endpoint protegido de la API, el servidor permite el acceso sin inconvenientes.
+Comportamiento tras la expiración: Una vez transcurrido el tiempo establecido (360 segundos), al intentar consumir nuevamente un endpoint protegido utilizando el mismo token, el filtro de seguridad de la API 
+rechaza la solicitud respondiendo con un código de error 401 Unauthorized, comprobando así que el mecanismo de validación por tiempo funciona de forma correcta y previene el uso de credenciales vencidas.
+
 5. Documentar en Swagger los endpoints de autenticación y de negocio.
+
+La documentación y exposición de los endpoints de autenticación y de negocio se implementó mediante la integración de Springdoc OpenAPI con Spring Security, 
+configurando los permisos necesarios en el filtro de seguridad (SecurityFilterChain) para permitir el acceso público a la interfaz de Swagger UI y al recurso de login, 
+manteniendo protegidas las rutas de la API bajo validación por tokens JWT firmados con criptografía RSA. Esto permite que, a través de la interfaz interactiva, 
+se puedan probar de forma transparente tanto la autenticación de credenciales como el consumo autorizado de los recursos de negocio utilizando el esquema de seguridad Bearer.
+
+![img.png](Images/img.png)
 
 ---
 
